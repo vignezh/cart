@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<on-start>
+		<evaluate expression="checkoutHandler.startFlow()" result="flowScope.shipment" />
+	</on-start>
+
+	<view-state id="start" view="shipment" model="flowScope.shipment">
+		<transition on="submit" to="confirm" />
+	</view-state>
+	<view-state id="confirm" view="confirmShipment"
+		model="flowScope.shipment">
+		<transition on="edit" to="start" />
+		<transition on="submit" to="save" />
+	</view-state>
+
+	<action-state id="save">
+		<evaluate expression="checkoutHandler.saveaddress(shipment)"></evaluate>
+		<transition to="savecart" />
+	</action-state>
+
+	<action-state id="savecart">
+		<evaluate expression="checkoutHandler.savecart(shipment)"></evaluate>
+		<transition to="payment" />
+	</action-state>
+
+	<end-state id="payment" view="Money" />
+	<end-state id="toHome" view="externalRedirect:contextRelative:index.jsp" />
+	<end-state id="toException" view="externalRedirect:contextRelative:exception.jsp" />
+
+</flow>
